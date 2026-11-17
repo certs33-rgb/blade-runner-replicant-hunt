@@ -485,8 +485,7 @@ function attack(){
       burst(hx,hy,{n:7,spd:2.4,life:14,c:'#ffd9a0',rgb:'255,217,160',dir:Math.atan2(ay,ax),spread:1.4});
       ringP(hx,hy,3,15,p.sword===2?'#ff9ac8':'#ffc36e',10,1.5);
       dmgText(e.x,e.y-14,long?2:1,p.sword===2?'#ff9ac8':'#ffc36e');
-      const kx=e.x+ax*14,ky=e.y+ay*14;
-      if(!solidBox(kx-10,kx+10,ky-10,ky+10)){e.x=kx;e.y=ky;}
+      if(e.type!=='boss'){const kx=e.x+ax*14,ky=e.y+ay*14;if(!solidBox(kx-10,kx+10,ky-10,ky+10)){e.x=kx;e.y=ky;}} // real melee knockback — boss exempt (no movement)
       if(e.hp<=0)killEnemy(e);
     }
   }
@@ -1137,13 +1136,13 @@ function drawEnemies(){
   for(const e of L.enemies){
     if(e.dead)continue;
     ctx.save();
-    // hit knockback: slide up to 8px away from the player (cosmetic) — boss exempt
+    // hit knockback: slide up to 4px away from the player (cosmetic) — boss exempt
     if(e.hitT>0&&e.type!=='boss'){
       const kx=e.x-player.x,ky=e.y-player.y,kd=Math.hypot(kx,ky)||1;
-      const off=Math.min(8,e.hitT*1.1);
+      const off=Math.min(4,e.hitT*0.55);
       ctx.translate(kx/kd*off,ky/kd*off);
     }
-    const flash=e.hitT>0&&(frame>>1)%2===0;
+    const flash=e.hitT>0&&(frame>>1)%2===0; // hit flash (boss included — fine)
     if(e.type==='seeker'){
       const ag=ctx.createRadialGradient(e.x,e.y,2,e.x,e.y,20);
       ag.addColorStop(0,'rgba(255,45,85,0.25)');ag.addColorStop(1,'transparent');
@@ -1344,30 +1343,26 @@ function drawEnemies(){
             ctx.stroke();
           }
         }else if(e.st==='tele'){
-          // sniper-laser dash telegraph: thin solid red beam, subtle glow, small aim reticle, powers up over 0.5s
+          // sniper-laser dash telegraph: thin dark-red beam, low glow, small aim reticle, locked full-length
           const tl=e.stT/30;                 // 0..1 charge
           const L=150;                       // full length immediately, locked on the player (no grow/follow)
           const ax=e.x+e.cdx*L, ay=e.y+e.cdy*L;
-          const a=0.35+0.6*tl;               // beam brightens as it charges
+          const a=0.28+0.45*tl;              // beam brightens slightly as it charges
           ctx.save();
-          // thin red laser beam with subtle glow
-          ctx.shadowColor='rgba(255,30,60,0.85)';
-          ctx.shadowBlur=6+4*tl;
-          ctx.strokeStyle='rgba(255,40,70,'+a+')';
-          ctx.lineWidth=2;
-          ctx.beginPath();ctx.moveTo(e.x,e.y);ctx.lineTo(ax,ay);ctx.stroke();
-          // bright core
-          ctx.shadowBlur=0;
-          ctx.strokeStyle='rgba(255,120,140,'+(0.5+0.5*tl)+')';
+          // thin dark-red laser beam, low glow
+          ctx.shadowColor='rgba(150,15,35,0.6)';
+          ctx.shadowBlur=3+2*tl;
+          ctx.strokeStyle='rgba(165,20,45,'+a+')';
           ctx.lineWidth=1;
           ctx.beginPath();ctx.moveTo(e.x,e.y);ctx.lineTo(ax,ay);ctx.stroke();
           // small aim reticle at the end (sniper point)
-          ctx.strokeStyle='rgba(255,40,70,'+(0.4+0.6*tl)+')';
-          ctx.lineWidth=1.5;
-          ctx.beginPath();ctx.arc(ax,ay,4+2*tl,0,Math.PI*2);ctx.stroke();
+          ctx.shadowBlur=0;
+          ctx.strokeStyle='rgba(165,20,45,'+(0.3+0.4*tl)+')';
+          ctx.lineWidth=1;
+          ctx.beginPath();ctx.arc(ax,ay,3+1.5*tl,0,Math.PI*2);ctx.stroke();
           // center dot
-          ctx.fillStyle='rgba(255,60,90,'+(0.5+0.5*tl)+')';
-          ctx.beginPath();ctx.arc(ax,ay,1.6,0,Math.PI*2);ctx.fill();
+          ctx.fillStyle='rgba(165,25,50,'+(0.4+0.4*tl)+')';
+          ctx.beginPath();ctx.arc(ax,ay,1.2,0,Math.PI*2);ctx.fill();
           ctx.restore();
         }
       }
