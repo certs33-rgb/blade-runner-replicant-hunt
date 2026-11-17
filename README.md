@@ -16,7 +16,9 @@ Open http://127.0.0.1:8000 in a modern browser. See `README.txt` for controls.
 
 This is a static site: no dependency installation, build command, backend, or API keys are required. The publish directory is the repository root (`.`), and the entry point is `index.html`.
 
-A GitHub-connected static hosting provider can deploy the `main` branch and automatically redeploy on subsequent pushes. Hosting is not configured by this initial upload. A private repository requires granting the chosen hosting provider access; a deployed website can still be public even when the source repository is private.
+Play online: https://certs33-rgb.github.io/blade-runner-replicant-hunt/
+
+GitHub Pages publishes the repository root from `main`. Push updated `index.html` and its required assets to `main`; GitHub will rebuild and publish the game at the same URL. Friends can also launch it from Dixon's Projects: https://dixon-projects.workspace-619203.chatgpt.site/
 
 ## Updating
 
